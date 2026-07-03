@@ -1,5 +1,11 @@
 import unicodedata
+import re
 from config import MATIERES_ALIASES, FORMAT_ALIASES
+from datetime import datetime, time, date
+
+
+def is_empty(cell):
+    return pd.isna(cell) or (isinstance(cell, str) and cell.strip() == "")
 
 def normalize_label(x):
     """
@@ -46,3 +52,17 @@ def dico_to_list(dico) :
     for k in dico:
         list += dico[k]
     return list
+
+def excel_coord(row_idx, col_idx):
+    """
+    Converts pandas coordonates to excel cell coordinates
+    :param row_idx: line index (0-based)
+    :param col_idx: column index (0-based)
+    :return: chaîne du type "B3"
+    """
+    col = col_idx + 1
+    letters = ""
+    while col > 0:
+        col, remainder = divmod(col - 1, 26)
+        letters = chr(65 + remainder) + letters
+    return f"{letters}{row_idx + 1}"
