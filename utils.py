@@ -1,5 +1,11 @@
 import unicodedata
+import re
 from config import MATIERES_ALIASES, FORMAT_ALIASES
+from datetime import datetime, time, date
+
+
+def is_empty(cell):
+    return pd.isna(cell) or (isinstance(cell, str) and cell.strip() == "")
 
 def normalize_label(x):
     """
@@ -46,3 +52,53 @@ def dico_to_list(dico) :
     for k in dico:
         list += dico[k]
     return list
+
+def excel_coord(row_idx, col_idx):
+    """
+    Converts pandas coordonates to excel cell coordinates
+    :param row_idx: line index (0-based)
+    :param col_idx: column index (0-based)
+    :return: chaîne du type "B3"
+    """
+    col = col_idx + 1
+    letters = ""
+    while col > 0:
+        col, remainder = divmod(col - 1, 26)
+        letters = chr(65 + remainder) + letters
+    return f"{letters}{row_idx + 1}"
+
+
+def classify_value(value):
+    """
+    :param value: an attribute in an active cell
+    :return: atribute category
+    """
+    if isinstance(value, datetime):
+        return "date"
+
+    if isinstance(value, time):
+        return "hour"
+
+    val_str = str(value).strip()
+
+    # student : "12" or "12A"
+    if re.match(r"^\d{1,2}$", val_str) or re.match(r"^\d{1,2}[A-Za-z]$", val_str):
+        return "student"
+
+    # weekday
+    jours = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"]
+    if val_str.lower() in jours:
+        return "weekday"
+
+    if match_matiere(val_str) is not None:
+        return "subject"
+
+    # salle
+    if "labo" in normalize_label(val_str) or re.search(r"\b([A-Za-z]\d{2,3}|\d{3})\b", val_str):
+        return "room"
+
+    # prof : "M." / "Mme." + {. / space} + word
+    if re.search(r"^Mm?e?[.\s]\s?[A-Za-zÀ-ÿ]+$", val_str):
+        return "teacher"
+
+    return None

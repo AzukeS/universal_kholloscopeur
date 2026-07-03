@@ -2,40 +2,27 @@ import pandas as pd
 import re
 from datetime import date, datetime
 from utils import prefixes, dico_to_list, normalize_label
-from heuristics import clean_cell
 from config import FORMAT_ALIASES, DATE_FORMAT, WRITTEN_DATE_MIN_CHARACTERS, WRITTEN_MAY, WRITTEN_MARCH
 
-def is_number_like(x):
-    """
-    Checks if a cell is a number, no matter its type.
-    :param x: a cell
-    :return: boolean if it is a number
-    """
-    if not isinstance(x, str):
-        return False
-    try:
-        float(x.strip().replace(",", "."))
-        return True
-    except ValueError:
-        return False
-
-# def normalize_dates(df) :
+DATE_PATTERN = re.compile(r"\d{1,2}/\d{1,2}(/\d{2,4})?")
 
 
+def clean_cell(cell):
+    if isinstance(cell, tuple):
+        cell = cell[0]
 
-# def ffill_strings_only(df):
-#     """
-#     Replaces NaN values with previous strings (e.g. professor names), avoiding ints for which blank cells actually exist.
-#     :param df: 2d dataframe (pandas dataframe)
-#     :return: filled dataframe
-#     """
-#
-#     mask_str = ~ df.map(is_number_like) # we check which cells ARE NOT numbers
-#     df_str_only = df.where(mask_str)
-#     df_str_filled = df_str_only.ffill()
-#     df = df.where(df.notna(), df_str_filled)
-#
-#     return df
+    if not isinstance(cell, str):
+        return cell
+
+    parts = cell.split("\n")
+
+    candidates = [p.strip() for p in parts if DATE_PATTERN.search(p)]
+
+    if candidates:
+        return "\n".join(parts)
+
+    return cell
+
 
 def convert_date_to_usual_format(cell) :
     """
@@ -44,11 +31,11 @@ def convert_date_to_usual_format(cell) :
     :return: a proper datetime string
     """
     if not isinstance(cell, str):
-        return cell
+        return cell, False
 
     parts = re.findall(r"\d+", cell)
-    if len(parts) not in (2, 3):
-        return cell
+    if len(parts) < 2:
+        return cell, False
 
     try:
         a, b = int(parts[0]), int(parts[1])
@@ -58,7 +45,7 @@ def convert_date_to_usual_format(cell) :
         elif "mm/dd" in DATE_FORMAT.lower() or  "mm-dd"  in DATE_FORMAT.lower() :
             month, day = a, b
         else:
-            return cell  # impossible configuration
+            return cell, False  # impossible configuration
 
         if len(parts) == 3:
             year = int(parts[2])
@@ -75,10 +62,10 @@ def convert_date_to_usual_format(cell) :
 
         dt = datetime(year, month, day)
 
-        return dt.strftime("%d/%m/%Y")
+        return dt, True
 
     except:
-        return cell
+        return cell, False
 
 
 
@@ -89,8 +76,10 @@ def parse_date_cell(cell):
     Returns original cell otherwise.
     """
 
+    if isinstance(cell, tuple):
+        cell = cell[0]
     if not isinstance(cell, str):
-        return cell
+        return cell, False
 
     text = normalize_label(cell)
 
@@ -114,13 +103,16 @@ def parse_date_cell(cell):
             WRITTEN_MARCH: 3,
             WRITTEN_MAY:5,
         })
-    words = re.split(r"[^\w]+", text)
+    words = [normalize_label(w) for w in re.split(r"[^a-zA-Z0-9]+", text)]
     numbers = re.findall(r"\d{1,4}", text)
 
     # Only numbers
-    if len(numbers) in (2, 3) and not re.search(r"[a-z]", text) :
-        return convert_date_to_usual_format(cell)
+    date_match = re.search(r"\d{1,2}/\d{1,2}(?:/\d{2,4})?", cell)
 
+    if date_match:
+        res, ok = convert_date_to_usual_format(date_match.group())
+        if ok:
+            return res, True
     # Extracting month
     month = None
     for w in words:
@@ -129,7 +121,7 @@ def parse_date_cell(cell):
             break
 
     if not month:
-        return cell
+        return cell, False
 
     # extracting the day and the year
     day = None
@@ -143,7 +135,7 @@ def parse_date_cell(cell):
             day = n_int
 
     if not day:
-        return cell
+        return cell, False
 
     # school year if not explicit
     if not year:
@@ -156,35 +148,30 @@ def parse_date_cell(cell):
             year = now.year - 1 if now.month < school_end else now.year
 
     try:
-        return datetime(year, month, day).strftime("%d/%m/%Y")
+        return datetime(year, month, day), True
     except:
-        return cell
+        return cell, False
 
 
 
 
-def find_date_axis(df):
+def find_date_axis(df, mask):
     """
     Return ('column', index) ou ('line', index) whether where are the dates.
     :param df: dataframe
     :return: date (string), index (int)"""
 
-    # Score of each column
     col_scores = {}
     for col in df.columns:
         values = df[col]
-        n_dates = sum(1 for v in values if parse_date_cell(v) is not v)
-        ratio = n_dates / len(values) if len(values) else 0
+        ratio = mask[col].sum() / len(values)
         col_scores[col] = ratio
 
-    # Score of each line
     row_scores = {}
     for idx in df.index:
         values = df.loc[idx]
-        n_dates = sum(1 for v in values if parse_date_cell(v) is not v)
-        ratio = n_dates / len(values) if len(values) else 0
+        ratio = mask.loc[idx].sum() / len(values)
         row_scores[idx] = ratio
-
     best_col = max(col_scores, key=col_scores.get)
     best_row = max(row_scores, key=row_scores.get)
 
@@ -201,10 +188,15 @@ def parse_csv(PATH):
     :return: the correct-filled dataframe
     """
     df = pd.read_csv(PATH, header=None)
-    # df = ffill_strings_only(df)
     df = df.dropna(how="all")
     df = df.map(clean_cell)
-    df = df.map(parse_date_cell)
-    print(find_date_axis(df))
+    parsed = df.map(parse_date_cell)
+    df = parsed.map(lambda x: x[0])
+    mask = parsed.map(lambda x: x[1])
 
-    return df
+    date_coordinate = find_date_axis(df, mask)
+    if date_coordinate[0] == "column" :
+        df = df.transpose()
+
+    return [df, date_coordinate[1]]
+
