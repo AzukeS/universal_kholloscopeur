@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 from config import *
-from parser import *
+from preprocessing import *
 from heuristics import find_all_categories
 
 if not len(PATH) :

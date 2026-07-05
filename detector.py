@@ -1,6 +1,27 @@
 import re
-from datetime import time, datetime, date
-from utils import normalize_label, match_matiere
+from datetime import time, datetime
+from utils import normalize_label, is_empty
+from config import MATIERES_ALIASES
+
+
+
+
+def match_matiere(x:str):
+    """
+    Gives the subject listed in MATIERES_ALIASES which corresponds to the cell label
+    :param x: a cell label
+    :return: the subject
+    """
+    key = normalize_label(x)
+    words = set(key.split())
+
+    for canon, aliases in MATIERES_ALIASES.items():
+        for alias in aliases:
+            alias_words = set(alias.split())
+            if alias_words.issubset(words):
+                return canon
+    return None
+
 
 
 def parse_time(cell):
@@ -15,8 +36,7 @@ def parse_time(cell):
 
     # special case
     if "midi" in cell:
-        return "12:00"
-
+        return time(12, 0)
 
     # HH:MM format
     match = re.search(r"\b(\d{1,2}):(\d{1,2})\b", cell)
@@ -52,6 +72,7 @@ def parse_time(cell):
 
 def classify_value(value):
     """
+    Gives the category to which the value belongs (string, e.g. "hour") or None if it doesn't.
     :param value: an attribute in an active cell
     :return: atribute category
     """
@@ -84,3 +105,71 @@ def classify_value(value):
         return "teacher"
 
     return None
+
+parsers = {
+    "hour": parse_time,
+    # "weekday": parse_weekday,
+    # "subject": parse_subject,
+    # "teacher": parse_teacher,
+    # "room": parse_room,
+}
+
+def propagate_line(line, parser):
+    """
+    Propagates the category to the following None (empty) cells
+    """
+
+    propagated = []
+    last_valid = False
+
+    for cell in line:
+        parsed = parser(cell)
+
+        if parsed is not None: # cell contains a valid category
+            last_valid = True
+            propagated.append(True)
+
+        elif is_empty(cell):
+            propagated.append(last_valid)
+
+        else:
+            # cellule non vide MAIS pas de la catégorie
+            last_valid = False
+            propagated.append(False)
+
+    return propagated
+
+
+def find_direction(category, df) :
+    """
+    Determine how a category propagates from a given cell in a DataFrame.
+
+    Categories are assumed to be aligned either along a row or a column:
+        - If most occurrences of the category are in the same column,
+        the category applies horizontally (across rows).
+        - If most occurrences are in the same row,
+        the category applies vertically (down columns).
+    (Not the most intuitive but it is easier that way)
+    :param category: The category to parse
+    :param df: The original dataframe parsed from CSV file
+    :return: "vertical" or "horizontal", depending on the dominant direction of the category around the cell (i.e., perpendicular to the densest axis).
+    """
+
+    parser = parsers.get(category)
+
+    row_scores = []
+    for i in range(df.shape[0]):
+        row = df.iloc[i]
+        propagated = propagate_line(row, parser)
+        row_scores.append(sum(propagated) / len(propagated))
+
+    col_scores = []
+    for j in range(df.shape[1]):
+        col = df.iloc[:, j]
+        propagated = propagate_line(col, parser)
+        col_scores.append(sum(propagated) / len(propagated))
+
+    row_strength = max(row_scores)
+    col_strength = max(col_scores)
+
+    return "vertical" if row_strength > col_strength else "horizontal"

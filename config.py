@@ -31,6 +31,15 @@ FORMAT_ALIASES = {
     12: ["decembre", "december"]
 }
 
+WEEK_DAYS = {
+    0: ["lundi"],
+    1: ["mardi"],
+    2: ["mercredi"],
+    3: ["jeudi"],
+    4: ["vendredi"],
+    5: ["samedi"],
+}
+
 # Format des dates, à changer si nécessaire
 # Pas besoin de modifier non plus si les dates n'utilisent pas uniquement le format xx/xx
 DATE_FORMAT = "dd/mm" # jour / mois

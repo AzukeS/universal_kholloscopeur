@@ -1,8 +1,5 @@
 import unicodedata
-import re
-from config import MATIERES_ALIASES, FORMAT_ALIASES
-from datetime import datetime, time, date
-
+import pandas as pd
 
 def is_empty(cell):
     return pd.isna(cell) or (isinstance(cell, str) and cell.strip() == "")
@@ -22,23 +19,6 @@ def normalize_label(x):
     return s
 
 
-def match_matiere(x):
-    """
-    Gives the subject listed in MATIERES_ALIASES which corresponds to the cell label
-    :param x: a cell label
-    :return: the subject
-    """
-    key = normalize_label(x)
-    words = set(key.split())
-
-    for canon, aliases in MATIERES_ALIASES.items():
-        for alias in aliases:
-            alias_words = set(alias.split())
-            if alias_words.issubset(words):
-                return canon
-    return None
-
-
 def prefixes(word):
     """
     Returns a list of prefixes of word with at least two letters
@@ -55,7 +35,7 @@ def dico_to_list(dico) :
 
 def excel_coord(row_idx, col_idx):
     """
-    Converts pandas coordonates to excel cell coordinates
+    Converts pandas coordinates to excel cell coordinates
     :param row_idx: line index (0-based)
     :param col_idx: column index (0-based)
     :return: chaîne du type "B3"
@@ -66,3 +46,25 @@ def excel_coord(row_idx, col_idx):
         col, remainder = divmod(col - 1, 26)
         letters = chr(65 + remainder) + letters
     return f"{letters}{row_idx + 1}"
+
+
+def apply_to_active_cells(active_cells, direction, categories_repartition, cell_coordinates):
+    """
+    Depending on if the category is vertical or horizontal, applies the value of the cell to all active cells in the categories_repartition dataframe
+    """
+    source = categories_repartition.iloc[cell_coordinates[0], cell_coordinates[1]]
+
+    if not isinstance(source, list):
+        return categories_repartition
+
+    for row, col in active_cells:
+
+        if direction == "vertical" and col == cell_coordinates[1]:
+             categories_repartition.iloc[row, col].append(source[-1])
+
+
+        elif direction == "horizontal" and row == cell_coordinates[0]:
+            categories_repartition.iloc[row, col].append(source[-1])
+
+
+    return categories_repartition

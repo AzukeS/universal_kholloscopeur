@@ -2,8 +2,8 @@ import re
 import sys
 import pandas as pd
 from datetime import datetime
-from utils import match_matiere, normalize_label, excel_coord
-from detector import classify_value, parse_time
+from utils import normalize_label, excel_coord, apply_to_active_cells, is_empty
+from detector import classify_value, parse_time, find_direction
 
 def catch_students(df, categories_repartition) :
     """
@@ -72,11 +72,61 @@ def propagate_dates(categories_repartition, df, date_line) :
     for i, date in enumerate(df.iloc[date_line]):
         if isinstance(date, datetime):
             for j in range(len(categories_repartition)):
-                if categories_repartition.iloc[j, i] is not None:
-                    cell = categories_repartition.iloc[j, i]
+                cell = categories_repartition.iloc[j, i]
+
+                if isinstance(cell, list):
                     cell.append(date)
 
     return categories_repartition
+
+
+def catch_hours(df, categories_repartition, active_cells) :
+    """
+    Parses the hours of the tasks for the whole df
+    :param df: The dataframe from the parsed csv file
+    :param categories_repartition: The dataframe with categories repartition
+    :return: the modified dataframe with added hour of the kholle for each active cell
+    """
+    direction = find_direction("hour", df)
+
+    for col_idx in range(df.shape[1]):
+        for row_idx in range(df.shape[0]):
+            cell = df.iloc[row_idx, col_idx]
+            hour = parse_time(cell)
+
+            if hour is not None:
+
+                current = categories_repartition.iloc[row_idx, col_idx]
+                if not isinstance(current, list):
+                    categories_repartition.iloc[row_idx, col_idx] = [hour]
+                else:
+                    current.append(hour)
+
+                if direction == "horizontal":
+                    i = row_idx + 1
+                    while i < df.shape[0] and pd.isna(df.iloc[i, col_idx]):
+                        target = categories_repartition.iloc[i, col_idx]
+                        if not isinstance(target, list):
+                            categories_repartition.iloc[i, col_idx] = [hour]
+                        else:
+                            target.append(hour)
+                        i += 1
+
+                elif direction == "vertical":
+                    j = col_idx + 1
+                    while j < df.shape[1] and pd.isna(df.iloc[row_idx, j]):
+                        target = categories_repartition.iloc[row_idx, j]
+                        if not isinstance(target, list):
+                            categories_repartition.iloc[row_idx, j] = [hour]
+                        else:
+                            target.append(hour)
+                        j += 1
+
+                apply_to_active_cells(active_cells, direction, categories_repartition, (row_idx, col_idx))
+
+
+
+
 
 
 def check_all_attributes_filled(categories_repartition, active_cells):
@@ -104,9 +154,10 @@ def check_all_attributes_filled(categories_repartition, active_cells):
         coord = excel_coord(row_idx, col_idx)
         sys.exit(
             f"Erreur : la cellule {coord} (ligne {row_idx}, colonne {col_idx}) "
-            f"n'a pas reçu {'l\'attribut' if len(missing_attributes) == 1 else 'les attributs'} "
+            f"n'a pas pu recevoir {'l\'attribut' if len(missing_attributes) == 1 else 'les attributs'} "
             f"suivant(s) : {', '.join(missing_attributes)}."
         )
+
 
 def find_all_categories(df, date_line) :
     """
@@ -115,9 +166,14 @@ def find_all_categories(df, date_line) :
     :param date_line: the line containing the dates of each week
     :return: the original dataframe and the repartition dataframe
     """
-    categories_repartition = df.copy()
-    categories_repartition[:] = None
+    categories_repartition = pd.DataFrame(
+        None,
+        index=df.index,
+        columns=df.columns,
+        dtype=object
+    )
     categories_repartition, active_cells, sub_divide = catch_students(df, categories_repartition)
     categories_repartition = propagate_dates(categories_repartition, df, date_line)
-    check_all_attributes_filled(categories_repartition, active_cells)
+    catch_hours(df, categories_repartition, active_cells)
+    # check_all_attributes_filled(categories_repartition, active_cells)
     return categories_repartition
