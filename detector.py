@@ -88,7 +88,7 @@ def parse_weekday(cell) -> int | None:
     return None
 
 
-def parse_teacher(cell, cell_coordinates, label_coordinates, direction) -> str | None:
+def parse_room(cell, cell_coordinates, label_coordinates, direction) -> str | None:
     """
     Returns the room contained in the cell, or None if the cell doesn't contain a room.
     It should be either contained in SPECIAL_ROOMS (config.py) or to the format letter + 2/3 digits or 3 digits.
@@ -177,6 +177,14 @@ def parse_subject(cell) -> str | None:
                 return key
 
 
+parsers = {
+    "hour": parse_time,
+    "weekday": parse_weekday,
+    "subject": parse_subject,
+    "teacher": parse_teacher,
+    "room": parse_teacher,
+}
+
 def classify_value(value) -> str | None:
     """
     Gives the category to which the value belongs -probably, not as precise as dedicated parsers- (string, e.g. "hour") or None if it doesn't.
@@ -212,13 +220,7 @@ def classify_value(value) -> str | None:
 
     return None
 
-parsers = {
-    "hour": parse_time,
-    "weekday": parse_weekday,
-    "subject": parse_subject,
-    "teacher": parse_teacher,
-    "room": parse_teacher,
-}
+
 
 def propagate_line(line, parser):
     """

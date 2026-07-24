@@ -13,3 +13,5 @@ Un projet de conversion intelligente de csv sous un format importable sur todois
 
 1. Il faut installer la librairie pandas
 2. Il faut spécifier le chemin du kholloscope dans le fichier config.py
+
+https://www.todoist.com/help/articles/import-or-export-a-project-as-a-csv-file-in-todoist-YC8YvN#h_01JR212YPZY4QYZKGKARRSSSRZ

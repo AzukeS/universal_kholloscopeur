@@ -3,6 +3,7 @@ from pathlib import Path
 from config import *
 from preprocessing import *
 from heuristics import find_all_categories
+from normalizer import main_normalizer, file_creator
 
 if not len(PATH) :
     sys.exit("No path provided in config")
@@ -10,7 +11,8 @@ if not len(PATH) :
 
 normalize_all_config()
 tab, date_line = parse_csv(PATH)
-categories_repartition =  find_all_categories(tab, date_line)
+categories_repartition, active_cells, sub_divide =  find_all_categories(tab, date_line)
+main_normalizer(categories_repartition, active_cells)
 
 
 chemin = Path("outputs/tab.csv")
