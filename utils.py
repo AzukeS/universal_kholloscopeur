@@ -47,24 +47,40 @@ def excel_coord(row_idx, col_idx):
         letters = chr(65 + remainder) + letters
     return f"{letters}{row_idx + 1}"
 
+CATEGORIES_INDEX = {
+    "student": 0,
+    "date": 1,
+    "hour": 2,
+    "weekday": 3,
+    "room": 4,
+    "teacher": 5,
+    "subject": 6
+}
 
-def apply_to_active_cells(active_cells, direction, categories_repartition, cell_coordinates):
+def apply_to_active_cells(active_cells, direction, categories_repartition, cell_coordinates, category):
     """
-    Depending on if the category is vertical or horizontal, applies the value of the cell to all active cells in the categories_repartition dataframe
+    Depending on if the category is vertical or horizontal, applies the value of the cell
+    to all following active cells in the categories_repartition dataframe
+    (i.e. cells after the source in the propagation direction, so an earlier category
+    doesn't leak past a later one on the same row/column).
     """
     source = categories_repartition.iloc[cell_coordinates[0], cell_coordinates[1]]
+    index = CATEGORIES_INDEX.get(category)
 
-    if not isinstance(source, list):
+    if index is None:
+        raise ValueError(f"Unknown category: {category}")
+    if not isinstance(source, list) :
         return categories_repartition
 
     for row, col in active_cells:
 
-        if direction == "vertical" and col == cell_coordinates[1]:
-             categories_repartition.iloc[row, col].append(source[-1])
+        if (row, col) == cell_coordinates:
+            continue
 
+        if direction == "vertical" and col == cell_coordinates[1] and row > cell_coordinates[0]:
+            categories_repartition.iloc[row, col][index] = source[-1]
 
-        elif direction == "horizontal" and row == cell_coordinates[0]:
-            categories_repartition.iloc[row, col].append(source[-1])
-
+        elif direction == "horizontal" and row == cell_coordinates[0] and col > cell_coordinates[1]:
+            categories_repartition.iloc[row, col][index] = source[-1]
 
     return categories_repartition

@@ -2,10 +2,36 @@ import pandas as pd
 import re
 from datetime import date, datetime
 from utils import prefixes, dico_to_list, normalize_label
-from config import FORMAT_ALIASES, DATE_FORMAT, WRITTEN_DATE_MIN_CHARACTERS, WRITTEN_MAY, WRITTEN_MARCH
+from config import *
+
 
 DATE_PATTERN = re.compile(r"\d{1,2}/\d{1,2}(/\d{2,4})?")
 
+def normalize_all_config():
+    """
+    Normalize all the config file
+    :return: every object from confg.py normalized, i.e. without capitalization, accents and special caracters
+    """
+
+    global MATIERES_ALIASES, FORMAT_ALIASES, WEEK_DAYS
+    global SPECIAL_ROOMS, ROOM_LABELS, TEACHER_LABELS, SUBJECTS_LABELS
+
+    def normalize_alias_dict(d):
+        return {
+            key: [normalize_label(v) for v in values]
+            for key, values in d.items()
+        }
+
+    # dictionnaries of aliases (keys not normalized)
+    MATIERES_ALIASES = normalize_alias_dict(MATIERES_ALIASES)
+    FORMAT_ALIASES = normalize_alias_dict(FORMAT_ALIASES)
+    WEEK_DAYS = normalize_alias_dict(WEEK_DAYS)
+
+    # lists
+    SPECIAL_ROOMS = [normalize_label(x) for x in SPECIAL_ROOMS]
+    ROOM_LABELS = [normalize_label(x) for x in ROOM_LABELS]
+    TEACHER_LABELS = [normalize_label(x) for x in TEACHER_LABELS]
+    SUBJECTS_LABELS = [normalize_label(x) for x in SUBJECTS_LABELS]
 
 def clean_cell(cell):
     if isinstance(cell, tuple):

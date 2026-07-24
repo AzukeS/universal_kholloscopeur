@@ -8,7 +8,7 @@ if not len(PATH) :
     sys.exit("No path provided in config")
 
 
-
+normalize_all_config()
 tab, date_line = parse_csv(PATH)
 categories_repartition =  find_all_categories(tab, date_line)
 

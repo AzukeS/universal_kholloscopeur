@@ -4,13 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ba07d02e-8c2d-4562-8fbf-f18d043b2aee" name="Changes" comment="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;detector.py&#10;#&#9;heuristics.py&#10;#&#9;utils.py">
+    <list default="true" id="ba07d02e-8c2d-4562-8fbf-f18d043b2aee" name="Changes" comment="Added the hours to every cell, wrote a function to propagate the category to cells, and a function to tell if a category applies  horizontally or vertically.&#10;Probably introduced a lot of bugs as well, as I encountered the first issues with pandas dataframe types (my fault for not reading the doc)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/detector.py" beforeDir="false" afterPath="$PROJECT_DIR$/detector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/heuristics.py" beforeDir="false" afterPath="$PROJECT_DIR$/heuristics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/normalizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/normalizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocessing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,16 +182,16 @@
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python.detector" />
-      <item itemvalue="Python.tester" />
       <item itemvalue="Python.normalizer" />
       <item itemvalue="Python.preprocessing" />
+      <item itemvalue="Python.tester" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.tester" />
-        <item itemvalue="Python.detector" />
-        <item itemvalue="Python.normalizer" />
         <item itemvalue="Python.preprocessing" />
+        <item itemvalue="Python.normalizer" />
+        <item itemvalue="Python.detector" />
       </list>
     </recent_temporary>
   </component>
@@ -213,7 +215,16 @@
       <workItem from="1782981858482" duration="35702000" />
       <workItem from="1783079083536" duration="26456000" />
       <workItem from="1783165990230" duration="4714000" />
-      <workItem from="1783263116230" duration="19386000" />
+      <workItem from="1783263116230" duration="20326000" />
+      <workItem from="1783320399360" duration="24733000" />
+      <workItem from="1783417252370" duration="12513000" />
+      <workItem from="1783589836045" duration="1876000" />
+      <workItem from="1783665587385" duration="8982000" />
+      <workItem from="1784130982790" duration="1274000" />
+      <workItem from="1784716694846" duration="601000" />
+      <workItem from="1784736441376" duration="3010000" />
+      <workItem from="1784820187374" duration="15377000" />
+      <workItem from="1784878411464" duration="16040000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -271,7 +282,15 @@
       <option name="project" value="LOCAL" />
       <updated>1783115788864</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added the hours to every cell, wrote a function to propagate the category to cells, and a function to tell if a category applies  horizontally or vertically.&#10;Probably introduced a lot of bugs as well, as I encountered the first issues with pandas dataframe types (my fault for not reading the doc)">
+      <option name="closed" value="true" />
+      <created>1783295276945</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1783295276945</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -295,15 +314,16 @@
     <MESSAGE value="Moved" />
     <MESSAGE value="Detects every student cell&#10;Classify it in a list&#10;Patched the bug which counted PRONOTE weeks as students&#10;Add datetime attribute to every student cell&#10;Added a function to verify if every cell got all the attributes, otherwise returns an error with the missing ones and the excel coordinates of the damaged cell" />
     <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;detector.py&#10;#&#9;heuristics.py&#10;#&#9;utils.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;detector.py&#10;#&#9;heuristics.py&#10;#&#9;utils.py" />
+    <MESSAGE value="Added the hours to every cell, wrote a function to propagate the category to cells, and a function to tell if a category applies  horizontally or vertically.&#10;Probably introduced a lot of bugs as well, as I encountered the first issues with pandas dataframe types (my fault for not reading the doc)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added the hours to every cell, wrote a function to propagate the category to cells, and a function to tell if a category applies  horizontally or vertically.&#10;Probably introduced a lot of bugs as well, as I encountered the first issues with pandas dataframe types (my fault for not reading the doc)" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/universal_kholloscopeur$main.coverage" NAME="main Coverage Results" MODIFIED="1783294975756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/universal_kholloscopeur$main.coverage" NAME="main Coverage Results" MODIFIED="1784898552832" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/universal_kholloscopeur$normalizer.coverage" NAME="normalizer Coverage Results" MODIFIED="1783080294087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/universal_kholloscopeur$config.coverage" NAME="config Coverage Results" MODIFIED="1782853425831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/universal_kholloscopeur$parser.coverage" NAME="parser Coverage Results" MODIFIED="1783032513829" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/universal_kholloscopeur$utils.coverage" NAME="utils Coverage Results" MODIFIED="1783010846237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/universal_kholloscopeur$detector.coverage" NAME="detector Coverage Results" MODIFIED="1783106183111" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/universal_kholloscopeur$tester.coverage" NAME="tester Coverage Results" MODIFIED="1783115262385" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/universal_kholloscopeur$tester.coverage" NAME="tester Coverage Results" MODIFIED="1784898051022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
