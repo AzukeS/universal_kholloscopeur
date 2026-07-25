@@ -13,6 +13,7 @@ normalize_all_config()
 tab, date_line = parse_csv(PATH)
 categories_repartition, active_cells, sub_divide =  find_all_categories(tab, date_line)
 main_normalizer(categories_repartition, active_cells)
+file_creator(categories_repartition, active_cells, sub_divide)
 
 
 chemin = Path("outputs/tab.csv")

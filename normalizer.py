@@ -1,5 +1,11 @@
+import re
+import csv
 from datetime import time, datetime, timedelta
+
+from config import EXPORT_PATH
 from utils import CATEGORIES_INDEX
+from pathlib import Path
+
 
 FINAL_CATEGORIES_INDEX = {
     "student": 0,
@@ -76,14 +82,117 @@ def main_normalizer(categories_repartition, active_cells) :
         del cell[date_index]
 
 
+def split_num_letter(s):
+    match = re.fullmatch(r'(\d+)([a-zA-Z]?)', s)
+    if match:
+        number = int(match.group(1))
+        letter = match.group(2) or None
+        return number, letter
+    return None
 
 
-
-def file_creator(categories_repartition, active_cells, subdivide) :
+def count_students_per_group(categories_repartition, active_cells) :
     """
-    The main function to create the files
+    processes every cell to find what letters represent the students for each group
     :param categories_repartition: The repartition dataframe of all cells from the parsed CSV file
     :param active_cells: The active cells in the dataframe (list of couples representing the coordinates)
-    :param subdivide: A boolean whether if the groups of students are subdivided or not
-    :return: In place, created files
+    :return: a dictionary, where the key is the group and the value is the number of students in that group
     """
+    parsed_groups =[]
+    students_per_group = {}
+    for (row, col) in active_cells:
+        cell = categories_repartition.iloc[row, col]
+        student = cell[FINAL_CATEGORIES_INDEX["student"]]
+        result = split_num_letter(student)
+        if result is None :
+            raise ValueError(f"Student format not recognised: {student}")
+        group, letter = result
+        if group not in parsed_groups:
+            subgroup = []
+            for (row2, col2) in active_cells:
+                new_cell = categories_repartition.iloc[row2, col2]
+                new_student = new_cell[FINAL_CATEGORIES_INDEX["student"]]
+                new_result = split_num_letter(new_student)
+                if new_result is None:
+                    raise ValueError(f"Student format not recognised: {new_student}")
+                new_group, new_letter = new_result
+                if new_letter is not None and new_letter.lower() not in subgroup and new_group == group :
+                    subgroup.append(new_letter.lower())
+            students_per_group[group] = subgroup
+            parsed_groups.append(group)
+    return students_per_group
+
+
+
+def file_creator(categories_repartition, active_cells, subdivide, output_dir=EXPORT_PATH, date_lang="fr"):
+    students_in_group = count_students_per_group(categories_repartition, active_cells) if subdivide else {}
+
+    student_idx = FINAL_CATEGORIES_INDEX["student"]
+    room_idx = FINAL_CATEGORIES_INDEX["room"]
+    teacher_idx = FINAL_CATEGORIES_INDEX["teacher"]
+    subject_idx = FINAL_CATEGORIES_INDEX["subject"]
+    datetime_idx = FINAL_CATEGORIES_INDEX["datetime"]
+
+    groups = {}
+
+    for (row, col) in active_cells:
+        cell = categories_repartition.iloc[row, col]
+
+        student = cell[student_idx]
+        room = cell[room_idx]
+        teacher = cell[teacher_idx]
+        subject = cell[subject_idx]
+        dt = cell[datetime_idx]
+
+        groups.setdefault(student, []).append((dt, room, teacher, subject))
+
+
+    # propagates the task of the group to every student in the group
+    if subdivide:
+        for student_key in list(groups.keys()):
+            result = split_num_letter(student_key)
+            if result is None:
+                raise ValueError(f"Student format not recognised: {student_key}")
+            number, letter = result
+
+            if letter is None:
+                letters = students_in_group.get(number, [])
+                if letters:
+                    whole_group_tasks = groups.pop(student_key)
+                    for l in letters:
+                        subgroup_key = f"{number}{l}"
+                        groups.setdefault(subgroup_key, []).extend(whole_group_tasks)
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    existing_files = []
+    header = [
+        "TYPE", "CONTENT", "DESCRIPTION", "PRIORITY", "INDENT",
+        "AUTHOR", "RESPONSIBLE", "DATE", "DATE_LANG", "TIMEZONE"
+    ]
+
+    for student, tasks in groups.items():
+        tasks.sort(key=lambda t: t[0])
+
+        rows = []
+        for dt, room, teacher, subject in tasks:
+            prefix = "d'" if subject[0].lower() in "aeiou" else "de "
+            rows.append([
+                "task",
+                f"Khôlle {prefix}{subject} en {room} avec {teacher}",
+                "", "1", "1", "", "",
+                dt,
+                date_lang, "",
+            ])
+
+        filename = output_dir / f"Groupe{student}.csv"
+        with open(filename, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(rows)
+
+        existing_files.append(str(filename))
+
+    return existing_files
+

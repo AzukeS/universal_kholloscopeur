@@ -1,6 +1,9 @@
 # Chemin du fichier à traiter
 PATH = "data/kholloscopeA.csv"
 
+# Chemin du dossier vers lequel envoyer les sorties
+EXPORT_PATH = "data/outputs/"
+
 
 # Nom des matières prśentes dans le khôlloscope
 MATIERES_ALIASES = {
