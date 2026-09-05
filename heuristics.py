@@ -1,8 +1,8 @@
 import re
 import sys
 import pandas as pd
-from datetime import datetime, timedelta
-from utils import normalize_label, excel_coord, apply_to_active_cells, is_empty, CATEGORIES_INDEX
+from datetime import datetime
+from utils import normalize_label, excel_coord, apply_to_active_cells, CATEGORIES_INDEX
 from detector import classify_value, parse_time, parse_weekday, parse_teacher, parse_room, parse_subject, find_direction, catch_label_coordinates
 
 def catch_students(df, categories_repartition) :

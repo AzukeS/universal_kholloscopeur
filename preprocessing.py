@@ -1,8 +1,8 @@
 import pandas as pd
 import re
 import sys
-from datetime import date, datetime
-from utils import prefixes, dico_to_list, normalize_label
+from datetime import datetime
+from utils import normalize_label
 import config
 
 def normalize_all_config():
@@ -36,8 +36,10 @@ def clean_cell(cell):
     return cell.strip()
 
 def infer_school_year(month: int) -> int:
-    now = datetime.now()
     school_end = 7  # juillet
+    if config.SCHOOL_YEAR_START is not None:
+        return config.SCHOOL_YEAR_START if month >= school_end else config.SCHOOL_YEAR_START + 1
+    now = datetime.now()
     if month < school_end:
         return now.year if now.month < school_end else now.year + 1
     return now.year - 1 if now.month < school_end else now.year

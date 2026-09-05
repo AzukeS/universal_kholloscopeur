@@ -1,6 +1,12 @@
 # Chemin du fichier à traiter
 PATH = "data/Colloscope 2026-2027.csv"
 
+
+# Année de début de l'année scolaire à traiter (ex: 2026 pour l'année 2026-2027).
+# Laisser à None pour déduire automatiquement à partir de la date du jour
+# (comportement risqué si on relance le script après la fin de l'année scolaire visée).
+SCHOOL_YEAR_START = None
+
 # Chemin du dossier vers lequel envoyer les sorties
 EXPORT_PATH = "data/outputs/"
 

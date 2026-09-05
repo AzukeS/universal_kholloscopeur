@@ -1,6 +1,6 @@
 import re
 import csv
-from datetime import time, datetime, timedelta
+from datetime import datetime, timedelta
 
 import config
 from utils import CATEGORIES_INDEX

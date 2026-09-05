@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import config
-from preprocessing import *
+from preprocessing import normalize_all_config, parse_csv
 from heuristics import find_all_categories
 from normalizer import main_normalizer, file_creator
 
