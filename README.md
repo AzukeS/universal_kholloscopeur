@@ -4,7 +4,7 @@ Un projet de conversion intelligente de csv sous un format importable sur todois
 
 # Pour l'exécution 
 
-La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respect les conditions décrites dans la section ci-dessous. <br>
+La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respecte les conditions décrites dans la section ci-dessous. <br>
 
 ## 1) Conditions sur le fichier excel :
 
