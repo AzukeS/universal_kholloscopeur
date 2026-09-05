@@ -53,6 +53,7 @@ pip install -r requirements.txt
 ```
 6. Renseignez le chemin du kholloscope dans `config.py` et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
 7. Lancez `main.py`.
+8. Tous les fichiers CSV générés seront stockés à partir de la racine du projet dans data/outputs.
 
 # Contact
 
