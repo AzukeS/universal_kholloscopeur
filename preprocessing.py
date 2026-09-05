@@ -1,11 +1,9 @@
 import pandas as pd
 import re
+import sys
 from datetime import date, datetime
 from utils import prefixes, dico_to_list, normalize_label
 from config import *
-
-
-DATE_PATTERN = re.compile(r"\d{1,2}/\d{1,2}(/\d{2,4})?")
 
 def normalize_all_config():
     """
@@ -36,19 +34,16 @@ def normalize_all_config():
 def clean_cell(cell):
     if isinstance(cell, tuple):
         cell = cell[0]
-
     if not isinstance(cell, str):
         return cell
+    return cell.strip()
 
-    parts = cell.split("\n")
-
-    candidates = [p.strip() for p in parts if DATE_PATTERN.search(p)]
-
-    if candidates:
-        return "\n".join(parts)
-
-    return cell
-
+def infer_school_year(month: int) -> int:
+    now = datetime.now()
+    school_end = 7  # juillet
+    if month < school_end:
+        return now.year if now.month < school_end else now.year + 1
+    return now.year - 1 if now.month < school_end else now.year
 
 def convert_date_to_usual_format(cell) :
     """
@@ -73,19 +68,7 @@ def convert_date_to_usual_format(cell) :
         else:
             return cell, False  # impossible configuration
 
-        if len(parts) == 3:
-            year = int(parts[2])
-            if year < 100:
-                year += 2000
-        else:
-            now = datetime.now()
-            school_end = 7  # juillet
-
-            if month < school_end:
-                year = now.year if now.month < school_end else now.year + 1
-            else:
-                year = now.year - 1 if now.month < school_end else now.year
-
+        year = infer_school_year(month)
         dt = datetime(year, month, day)
 
         return dt, True
@@ -119,16 +102,14 @@ def parse_date_cell(cell):
         }
     else :
         month_map = {
-        normalize_label(alias)[:i]: month
-        for month, aliases in FORMAT_ALIASES.items()
-        for alias in aliases
-        for i in range(2, len(alias) + 1)
+            normalize_label(alias)[:i]: month
+            for month, aliases in FORMAT_ALIASES.items()
+            for alias in aliases
+            for i in range(2, len(alias) + 1)
         }
-        # Litigious cases of mars vs mai, juin vs juillet
-        month_map.update({
-            WRITTEN_MARCH: 3,
-            WRITTEN_MAY:5,
-        })
+        month_map.pop("ma", None)  # mars/mai ambigu
+        month_map[WRITTEN_MARCH] = 3
+        month_map[WRITTEN_MAY] = 5
     words = [normalize_label(w) for w in re.split(r"[^a-zA-Z0-9]+", text)]
     numbers = re.findall(r"\d{1,4}", text)
 
@@ -164,18 +145,10 @@ def parse_date_cell(cell):
         return cell, False
 
     # school year if not explicit
-    if not year:
-        now = datetime.now()
-        school_end = 7  # juillet
-
-        if month < school_end:
-            year = now.year if now.month < school_end else now.year + 1
-        else:
-            year = now.year - 1 if now.month < school_end else now.year
-
+    year = infer_school_year(month)
     try:
         return datetime(year, month, day), True
-    except:
+    except (ValueError, TypeError):
         return cell, False
 
 
@@ -213,8 +186,11 @@ def parse_csv(PATH):
     :param PATH: path to csv file
     :return: the correct-filled dataframe
     """
-    df = pd.read_csv(PATH, header=None)
-    df = df.dropna(how="all")
+    try:
+        df = pd.read_csv(PATH, header=None)
+    except FileNotFoundError:
+        sys.exit(f"Erreur : le fichier spécifié dans config.py (PATH = \"{PATH}\") est introuvable.")
+    df = df.dropna(how="all").reset_index(drop=True)
     df = df.map(clean_cell)
     parsed = df.map(parse_date_cell)
     df = parsed.map(lambda x: x[0])

@@ -139,12 +139,18 @@ def file_creator(categories_repartition, active_cells, subdivide, output_dir=EXP
         cell = categories_repartition.iloc[row, col]
 
         student = cell[student_idx]
+        result = split_num_letter(str(student))
+        if result is None:
+            raise ValueError(f"Student format not recognised: {student}")
+        number, letter = result
+        student_key = f"{number}{letter.lower()}" if letter else str(number)
+
         room = cell[room_idx]
         teacher = cell[teacher_idx]
         subject = cell[subject_idx]
         dt = cell[datetime_idx]
 
-        groups.setdefault(student, []).append((dt, room, teacher, subject))
+        groups.setdefault(student_key, []).append((dt, room, teacher, subject))
 
 
     # propagates the task of the group to every student in the group

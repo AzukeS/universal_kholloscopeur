@@ -5,7 +5,8 @@ from preprocessing import *
 from heuristics import find_all_categories
 from normalizer import main_normalizer, file_creator
 
-if not len(PATH) :
+
+if not PATH:
     sys.exit("No path provided in config")
 
 
@@ -16,18 +17,17 @@ main_normalizer(categories_repartition, active_cells)
 file_creator(categories_repartition, active_cells, sub_divide)
 
 
-chemin = Path("outputs/tab.csv")
-chemin2 = Path("outputs/tab.xslx")
-chemin3 = Path("outputs/catégories.csv")
-chemin4 = Path("outputs/catégories.xslx")
+# debug
+export_dir = Path(EXPORT_PATH)
+export_dir.mkdir(parents=True, exist_ok=True)
 
-
-chemin.parent.mkdir(parents=True, exist_ok=True)
+chemin = export_dir / "tab.csv"
+chemin2 = export_dir / "tab.xlsx"
+chemin3 = export_dir / "catégories.csv"
+chemin4 = export_dir / "catégories.xlsx"
 
 tab.to_csv(chemin, index=False, encoding="utf-8")
-
 tab.to_excel(chemin2, index=False)
 categories_repartition.to_csv(chemin3, index=False, encoding="utf-8")
-
 categories_repartition.to_excel(chemin4, index=False)
 

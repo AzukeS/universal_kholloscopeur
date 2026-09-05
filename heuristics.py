@@ -3,7 +3,7 @@ import sys
 import pandas as pd
 from datetime import datetime, timedelta
 from utils import normalize_label, excel_coord, apply_to_active_cells, is_empty, CATEGORIES_INDEX
-from detector import classify_value, parse_time, parse_weekday, parse_teacher, parse_subject, find_direction, catch_label_coordinates
+from detector import classify_value, parse_time, parse_weekday, parse_teacher, parse_room, parse_subject, find_direction, catch_label_coordinates
 
 def catch_students(df, categories_repartition) :
     """
@@ -193,7 +193,7 @@ def catch_room(df, categories_repartition, active_cells):
     for col_idx in range(df.shape[1]):
         for row_idx in range(df.shape[0]):
             cell = df.iloc[row_idx, col_idx]
-            room = parse_teacher(cell, (row_idx, col_idx), label_coordinates, direction)
+            room = parse_room(cell, (row_idx, col_idx), label_coordinates, direction)
 
             if room is not None:
 
@@ -213,7 +213,7 @@ def catch_room(df, categories_repartition, active_cells):
 
                     while i < df.shape[0]:
                         cell_i = df.iloc[i, col_idx]
-                        detected = parse_teacher(cell_i, (i, col_idx), label_coordinates, direction)
+                        detected = parse_room(cell_i, (i, col_idx), label_coordinates, direction)
 
                         if detected is not None:
                             break
@@ -239,7 +239,7 @@ def catch_room(df, categories_repartition, active_cells):
 
                     while j < df.shape[1]:
                         cell_j = df.iloc[row_idx, j]
-                        detected = parse_teacher(cell_j, (row_idx, j), label_coordinates, direction)
+                        detected = parse_room(cell_j, (row_idx, j), label_coordinates, direction)
 
                         if detected is not None:
                             break
@@ -427,9 +427,10 @@ def check_all_attributes_filled(categories_repartition, active_cells):
         missing_attributes = [a for a in required_attributes if a not in found_attributes]
 
         coord = excel_coord(row_idx, col_idx)
+        missing_word = "l'attribut" if len(missing_attributes) == 1 else "les attributs"
         sys.exit(
             f"Erreur : la cellule {coord} (ligne {row_idx}, colonne {col_idx}) "
-            f"n'a pas pu recevoir {'l\'attribut' if len(missing_attributes) == 1 else 'les attributs'} "
+            f"n'a pas pu recevoir {missing_word} "
             f"suivant(s) : {', '.join(missing_attributes)}."
         )
 

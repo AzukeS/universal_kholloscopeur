@@ -1,5 +1,5 @@
 # Chemin du fichier à traiter
-PATH = "data/kholloscopeA.csv"
+PATH = "data/Colloscope 2026-2027.csv"
 
 # Chemin du dossier vers lequel envoyer les sorties
 EXPORT_PATH = "data/outputs/"
@@ -8,10 +8,10 @@ EXPORT_PATH = "data/outputs/"
 # Nom des matières prśentes dans le khôlloscope
 MATIERES_ALIASES = {
     "Mathématiques":  ["math", "maths", "mathematique", "mathematiques"],
-    "Physique":       ["physique", "pc", "p-c"],
+    "Physique":       ["phy.", "physique", "pc", "p-c"],
     "SI":             ["si", "sii", "sciences de l'ingenieur", "s.i.", "s.i.i.", "s.i", "s.i.i"],
     "SVT":            ["svt"],
-    "Anglais":        ["anglais", "lv1 anglais", "anglais lv1"],
+    "Anglais":        ["ang.", "anglais", "lv1 anglais", "anglais lv1"],
     "Espagnol":       ["espagnol", "lv2 espagnol", "espagnol lv2"],
     "Français":       ["fr", "francais"],
 }

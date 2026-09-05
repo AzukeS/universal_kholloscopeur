@@ -182,7 +182,7 @@ parsers = {
     "weekday": parse_weekday,
     "subject": parse_subject,
     "teacher": parse_teacher,
-    "room": parse_teacher,
+    "room": parse_room,
 }
 
 def classify_value(value) -> str | None:
@@ -230,7 +230,7 @@ def propagate_line(line, parser):
     propagated = []
     last_valid = False
 
-    if parser not in [parse_teacher, parse_teacher]:
+    if parser not in [parse_teacher, parse_room]:
         for cell in line:
             parsed = parser(cell)
 
