@@ -1,5 +1,12 @@
 import sys
 from pathlib import Path
+import shutil
+config = Path("config.py")
+config_example = Path("config.example.py")
+
+if not config.exists():
+    shutil.copy(config_example, config)
+
 import config
 from preprocessing import normalize_all_config, parse_csv
 from heuristics import find_all_categories

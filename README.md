@@ -4,7 +4,7 @@ Un projet de conversion intelligente de csv sous un format importable sur todois
 
 # Pour l'exécution 
 
-La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respecte les conditions décrites dans la section ci-dessous. <br>
+La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respect les conditions décrites dans la section ci-dessous. <br>
 
 ## 1) Conditions sur le fichier excel :
 
@@ -51,9 +51,8 @@ Cela se fait simplement depuis le tableur ("enregistrer sous" ou "exporter", cho
 ```bash
 pip install -r requirements.txt
 ```
-6. Renseignez le chemin du kholloscope dans `config.py` et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
+6. Renseignez le chemin du kholloscope dans `config.py` (ou `config.exemple.py` si le programme n'a pas encore créé `config.py`) et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
 7. Lancez `main.py`.
-8. Tous les fichiers CSV générés seront stockés à partir de la racine du projet dans data/outputs.
 
 # Contact
 
