@@ -11,7 +11,7 @@ Un projet de conversion intelligente de csv sous un format importable sur todois
 - Les salles sont inscrites dans une cellule à part (une cellule contenant "lundi d300" aura pour valeur de salle "lundi d300")
 - Idem pour le professeur
 
-1. Il faut installer la librairie pandas
+1. Il faut installer la librairie pandas (version ≥ 2.1)
 2. Il faut spécifier le chemin du kholloscope dans le fichier config.py
 
 https://www.todoist.com/help/articles/import-or-export-a-project-as-a-csv-file-in-todoist-YC8YvN#h_01JR212YPZY4QYZKGKARRSSSRZ

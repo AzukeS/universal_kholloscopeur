@@ -1,24 +1,24 @@
 import sys
 from pathlib import Path
-from config import *
+import config
 from preprocessing import *
 from heuristics import find_all_categories
 from normalizer import main_normalizer, file_creator
 
 
-if not PATH:
+if not config.PATH:
     sys.exit("No path provided in config")
 
 
 normalize_all_config()
-tab, date_line = parse_csv(PATH)
+tab, date_line = parse_csv(config.PATH)
 categories_repartition, active_cells, sub_divide =  find_all_categories(tab, date_line)
 main_normalizer(categories_repartition, active_cells)
 file_creator(categories_repartition, active_cells, sub_divide)
 
 
 # debug
-export_dir = Path(EXPORT_PATH)
+export_dir = Path(config.EXPORT_PATH)
 export_dir.mkdir(parents=True, exist_ok=True)
 
 chemin = export_dir / "tab.csv"

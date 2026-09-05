@@ -2,7 +2,7 @@ import re
 import csv
 from datetime import time, datetime, timedelta
 
-from config import EXPORT_PATH
+import config
 from utils import CATEGORIES_INDEX
 from pathlib import Path
 
@@ -124,7 +124,9 @@ def count_students_per_group(categories_repartition, active_cells) :
 
 
 
-def file_creator(categories_repartition, active_cells, subdivide, output_dir=EXPORT_PATH, date_lang="fr"):
+def file_creator(categories_repartition, active_cells, subdivide, output_dir=None, date_lang="fr"):
+    if output_dir is None:
+        output_dir = config.EXPORT_PATH
     students_in_group = count_students_per_group(categories_repartition, active_cells) if subdivide else {}
 
     student_idx = FINAL_CATEGORIES_INDEX["student"]

@@ -3,16 +3,13 @@ import re
 import sys
 from datetime import date, datetime
 from utils import prefixes, dico_to_list, normalize_label
-from config import *
+import config
 
 def normalize_all_config():
     """
     Normalize all the config file
-    :return: every object from confg.py normalized, i.e. without capitalization, accents and special caracters
+    :return: every object from config.py normalized, i.e. without capitalization, accents and special caracters
     """
-
-    global MATIERES_ALIASES, FORMAT_ALIASES, WEEK_DAYS
-    global SPECIAL_ROOMS, ROOM_LABELS, TEACHER_LABELS, SUBJECTS_LABELS
 
     def normalize_alias_dict(d):
         return {
@@ -21,15 +18,15 @@ def normalize_all_config():
         }
 
     # dictionnaries of aliases (keys not normalized)
-    MATIERES_ALIASES = normalize_alias_dict(MATIERES_ALIASES)
-    FORMAT_ALIASES = normalize_alias_dict(FORMAT_ALIASES)
-    WEEK_DAYS = normalize_alias_dict(WEEK_DAYS)
+    config.MATIERES_ALIASES = normalize_alias_dict(config.MATIERES_ALIASES)
+    config.FORMAT_ALIASES = normalize_alias_dict(config.FORMAT_ALIASES)
+    config.WEEK_DAYS = normalize_alias_dict(config.WEEK_DAYS)
 
     # lists
-    SPECIAL_ROOMS = [normalize_label(x) for x in SPECIAL_ROOMS]
-    ROOM_LABELS = [normalize_label(x) for x in ROOM_LABELS]
-    TEACHER_LABELS = [normalize_label(x) for x in TEACHER_LABELS]
-    SUBJECTS_LABELS = [normalize_label(x) for x in SUBJECTS_LABELS]
+    config.SPECIAL_ROOMS = [normalize_label(x) for x in config.SPECIAL_ROOMS]
+    config.ROOM_LABELS = [normalize_label(x) for x in config.ROOM_LABELS]
+    config.TEACHER_LABELS = [normalize_label(x) for x in config.TEACHER_LABELS]
+    config.SUBJECTS_LABELS = [normalize_label(x) for x in config.SUBJECTS_LABELS]
 
 def clean_cell(cell):
     if isinstance(cell, tuple):
@@ -61,9 +58,9 @@ def convert_date_to_usual_format(cell) :
     try:
         a, b = int(parts[0]), int(parts[1])
 
-        if "dd/mm" in DATE_FORMAT.lower() or "dd-mm" in DATE_FORMAT.lower() :
+        if "dd/mm" in config.DATE_FORMAT.lower() or "dd-mm" in config.DATE_FORMAT.lower() :
             day, month = a, b
-        elif "mm/dd" in DATE_FORMAT.lower() or  "mm-dd"  in DATE_FORMAT.lower() :
+        elif "mm/dd" in config.DATE_FORMAT.lower() or  "mm-dd"  in config.DATE_FORMAT.lower() :
             month, day = a, b
         else:
             return cell, False  # impossible configuration
@@ -93,23 +90,23 @@ def parse_date_cell(cell):
     text = normalize_label(cell)
 
     # mapping alias -> month
-    if WRITTEN_DATE_MIN_CHARACTERS > 2 :
+    if config.WRITTEN_DATE_MIN_CHARACTERS > 2 :
         month_map = {
         normalize_label(alias)[:i]: month
-        for month, aliases in FORMAT_ALIASES.items()
+        for month, aliases in config.FORMAT_ALIASES.items()
         for alias in aliases
-        for i in range(WRITTEN_DATE_MIN_CHARACTERS, len(alias) +1)
+        for i in range(config.WRITTEN_DATE_MIN_CHARACTERS, len(alias) +1)
         }
     else :
         month_map = {
             normalize_label(alias)[:i]: month
-            for month, aliases in FORMAT_ALIASES.items()
+            for month, aliases in config.FORMAT_ALIASES.items()
             for alias in aliases
             for i in range(2, len(alias) + 1)
         }
         month_map.pop("ma", None)  # mars/mai ambigu
-        month_map[WRITTEN_MARCH] = 3
-        month_map[WRITTEN_MAY] = 5
+        month_map[config.WRITTEN_MARCH] = 3
+        month_map[config.WRITTEN_MAY] = 5
     words = [normalize_label(w) for w in re.split(r"[^a-zA-Z0-9]+", text)]
     numbers = re.findall(r"\d{1,4}", text)
 
@@ -189,7 +186,7 @@ def parse_csv(PATH):
     try:
         df = pd.read_csv(PATH, header=None)
     except FileNotFoundError:
-        sys.exit(f"Erreur : le fichier spécifié dans config.py (PATH = \"{PATH}\") est introuvable.")
+        sys.exit(f"Erreur : le fichier spécifié dans config.py (PATH = \"{config.PATH}\") est introuvable.")
     df = df.dropna(how="all").reset_index(drop=True)
     df = df.map(clean_cell)
     parsed = df.map(parse_date_cell)

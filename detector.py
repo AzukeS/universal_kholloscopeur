@@ -1,7 +1,7 @@
 import re
 from datetime import time, datetime
 from utils import normalize_label, is_empty
-from config import *
+import config
 
 
 
@@ -15,7 +15,7 @@ def match_matiere(x:str):
     key = normalize_label(x)
     words = set(key.split())
 
-    for canon, aliases in MATIERES_ALIASES.items():
+    for canon, aliases in config.MATIERES_ALIASES.items():
         for alias in aliases:
             alias_words = set(alias.split())
             if alias_words.issubset(words):
@@ -79,7 +79,7 @@ def parse_weekday(cell) -> int | None:
         return None
 
     cell = cell.lower().strip()
-    for canon, aliases in WEEK_DAYS.items():
+    for canon, aliases in config.WEEK_DAYS.items():
         for alias in aliases:
             for word in cell.split():
                 word = word.strip(".,;:-")
@@ -102,7 +102,7 @@ def parse_room(cell, cell_coordinates, label_coordinates, direction) -> str | No
         return None
     cell = cell.strip()
     cell = cell.strip(".,;:-")
-    if normalize_label(cell) in SPECIAL_ROOMS:
+    if normalize_label(cell) in config.SPECIAL_ROOMS:
         return cell
     # letter + 2/3 digits format or 3 digits (e.g. D300, B23, or 234)
     elif re.search(r"\b([A-Za-z]\d{2,3}|\d{3})\b", normalize_label(cell)):
@@ -128,7 +128,7 @@ def parse_teacher(cell, cell_coordinates, label_coordinates, direction) -> str |
         return None
     cell = cell.strip()
     cell = cell.strip(".,;:-()[]{}")
-    titles_pattern = "|".join(map(re.escape, TEACHER_TITLES))
+    titles_pattern = "|".join(map(re.escape, config.TEACHER_TITLES))
 
     stop_words = [
         "et",
@@ -171,7 +171,7 @@ def parse_subject(cell) -> str | None:
     """
     if not isinstance(cell, str):
         return None
-    for key, aliases in MATIERES_ALIASES.items():
+    for key, aliases in config.MATIERES_ALIASES.items():
         for word in cell.split():
             if normalize_label(word) in aliases:
                 return key
@@ -315,7 +315,7 @@ def catch_label_coordinates(df, label, direction):
     for col_idx in range(df.shape[1]):
         for row_idx in range(df.shape[0]):
             cell = df.iloc[row_idx, col_idx]
-            if label == "room" and normalize_label(cell) in ROOM_LABELS:
+            if label == "room" and normalize_label(cell) in config.ROOM_LABELS:
                 if direction == "vertical":
                     if label_coords["common"] is None:
                         label_coords["common"] = col_idx
@@ -326,7 +326,7 @@ def catch_label_coordinates(df, label, direction):
                         label_coords["common"] = row_idx
                     if row_idx == label_coords["common"]:
                         label_coords["coords"].append(col_idx)
-            elif label == "teacher" and normalize_label(cell) in TEACHER_LABELS:
+            elif label == "teacher" and normalize_label(cell) in config.TEACHER_LABELS:
                 if direction == "vertical":
                     if label_coords["common"] is None:
                         label_coords["common"] = col_idx
@@ -337,7 +337,7 @@ def catch_label_coordinates(df, label, direction):
                         label_coords["common"] = row_idx
                     if row_idx == label_coords["common"]:
                         label_coords["coords"].append(col_idx)
-            elif label == "subject" and normalize_label(cell) in SUBJECTS_LABELS:
+            elif label == "subject" and normalize_label(cell) in config.SUBJECTS_LABELS:
                 if direction == "vertical":
                     if label_coords["common"] is None:
                         label_coords["common"] = col_idx

@@ -17,7 +17,7 @@ def catch_students(df, categories_repartition) :
 
     # regex
     simple_pattern = re.compile(r"^\d{1,2}$")
-    subdiv_pattern = re.compile(r"^\d{1,2}[A-Za-z]$")
+    subdiv_pattern = re.compile(r"^\d{1,2}[A-Ga-g]$")
 
     # computes the rows with "semaine" (cell by cell)
     normalized_df = df.astype(str).map(normalize_label)
@@ -456,5 +456,6 @@ def find_all_categories(df, date_line) :
     catch_teacher(df, categories_repartition, active_cells)
     catch_subject(df, categories_repartition, active_cells)
 
+    print(active_cells)
     check_all_attributes_filled(categories_repartition, active_cells)
     return categories_repartition, active_cells, sub_divide
