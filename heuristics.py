@@ -456,6 +456,5 @@ def find_all_categories(df, date_line) :
     catch_teacher(df, categories_repartition, active_cells)
     catch_subject(df, categories_repartition, active_cells)
 
-    print(active_cells)
     check_all_attributes_filled(categories_repartition, active_cells)
     return categories_repartition, active_cells, sub_divide

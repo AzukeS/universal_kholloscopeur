@@ -44,16 +44,18 @@ Cela se fait simplement depuis le tableur ("enregistrer sous" ou "exporter", cho
 
 1. Il faut disposer de python 3.8 ou plus
 2. Il faut avoir un IDE (ex : PyCharm, Visual Studio Code, etc.)
-3. Il faut installer la librairie pandas (version ≥ 2.1)
+3. Récupérez le dossier (bouton vert "Code" sur GitHub → "Download ZIP", ou `git clone` si vous utilisez git).
+4. Ouvrez le dossier dans PyCharm ou VS Code.
+5. L'IDE va détecter le fichier `requirements.txt` et proposer d'installer les dépendances (pandas, openpyxl, dateparser) — cliquez sur "Install"/"Yes" quand ça apparaît.
+    Si l'IDE ne propose rien automatiquement : ouvrez le terminal intégré de l'IDE (en bas de la fenêtre, onglet "Terminal") — pas besoin d'en ouvrir un autre — puis :
+```bash
+pip install -r requirements.txt
+```
+6. Renseignez le chemin du kholloscope dans `config.py` et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
+7. Lancez `main.py`.
+
+# Contact
 
 
-
-
-## Dépendances :
-
-- pandas >= 2.1
-
-https://www.todoist.com/help/articles/import-or-export-a-project-as-a-csv-file-in-todoist-YC8YvN#h_01JR212YPZY4QYZKGKARRSSSRZ
-
-Si vous avez la moindre suggestion, le moindre bug, essayez d'ouvrir un ticket sur github ou de me contacter par mail :
+Si vous avez la moindre suggestion, le moindre bug, la moindre interrogation essayez d'ouvrir un ticket sur github ou de me contacter par mail :
 universalkholloscopeur.support@gmail.com
