@@ -5,6 +5,12 @@
 Une liste des kholles accessible sur Todoist (mobile, pc, navigateur), notification au moment de la kholle, etc : <br>
 <img src="Images/result_mobile.png" width="250">
 
+## Avertissement
+
+Bien que le projet ait déjà été testé sur plusieurs fichiers, avec le recul d'un an, il est toujours possible que certaines erreurs surviennent.
+C'est pourquoi je vous invite, une fois l'import terminé, à prendre quelques minutes pour vérifier que toutes les khôlles ont été correctement détectées, avec les bonnes caractéristiques (date, heure, salle, professeur, matière).
+Si vous trouvez le moindre problème, je vous invite à m'envoyer les détails [ici](#contact) afin de fiabiliser au maximum le programme pour tous les utilisateurs.
+
 ## Étapes de l'import 
 
 ### 1. Avoir son fichier csv 
@@ -54,6 +60,7 @@ Il vous a soit été donné directement par quelqu'un, soit est issu du programm
 
 8. Après un (relativement) court chargement, vous obtenez : <br>
 <img src="Images/result_mobile.png" width="350">
+
 
 # Contact
 
