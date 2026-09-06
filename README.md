@@ -1,14 +1,15 @@
 # universal_kholloscopeur
 Un projet de conversion intelligente de csv sous un format importable sur todoist à partir d'un calendrier
 
-# Utilisation des fichiers issus du programme 
-
-Si vous possédez un fichier généré par le programme, cf [ce lien](import_todoist.md)
+> [!TIP]
+> **Vous avez reçu un fichier généré par le programme ?**
+> 
+> Consultez [ce guide](import_todoist.md) pour savoir comment l'importer dans Todoist.
 
 
 # Ce que fait le programme
 
-Il permet de convertir un tableau excel respectant contenant toutes les kholles d'une classe (respectant certaines condition, cf  [section plus bas](#conditions-sur-le-fichier-excel)), comme le suivant :
+Il permet de convertir un tableau excel contenant toutes les kholles d'une classe (respectant certaines condition, cf  [section plus bas](#1-conditions-sur-le-fichier-excel-)), comme le suivant :
 
 ![basique.png](Images/kholloscope_propre.png)
 En autant de fichiers CSV que de groupes de kholles différents (un par personne si certaines kholles sont individuelles, un par groupe si toutes les kholles sont collectives).
@@ -72,7 +73,7 @@ Cela se fait simplement depuis le tableur ("enregistrer sous" ou "exporter", cho
 ```bash
 pip install -r requirements.txt
 ```
-6. Renseignez le chemin du kholloscope dans `config.py` (ou `config.exemple.py` si le programme n'a pas encore créé `config.py`) et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
+6. Renseignez le chemin du kholloscope dans `config.py` (ou `config.example.py` si le programme n'a pas encore créé `config.py`) et vérifiez que toutes les variables du fichier comportent les notations propres à votre kholloscope.
 7. Lancez `main.py`.
 
 # Contact

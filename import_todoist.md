@@ -1,20 +1,22 @@
-# Résultat de l'import
+# Importer sur Todoist le fichier généré
+
+## Résultat de l'import
 
 Une liste des kholles accessible sur Todoist (mobile, pc, navigateur), notification au moment de la kholle, etc : <br>
 <img src="Images/result_mobile.png" width="250">
 
-# Étapes de l'import 
+## Étapes de l'import 
 
-## 1. Avoir son fichier csv 
+### 1. Avoir son fichier csv 
 
 Il vous a soit été donné directement par quelqu'un, soit est issu du programme.
-## 2. Importer le fichier csv dans Todoist
+### 2. Importer le fichier csv dans Todoist
 2 moyens :
 1. [Sur mobile](#sur-mobile)
 2. [Sur ordinateur](#sur-ordinateur-plus-simple) 
 
 
-### Sur ordinateur (plus simple)
+#### Sur ordinateur (plus simple)
 
 1. Se rendre soit sur le site web (https://todoist.com/) soit sur l'application. 
 2. Se connecter / s'inscrire
@@ -30,7 +32,7 @@ Il vous a soit été donné directement par quelqu'un, soit est issu du programm
 7. Après un (relativement) court chargement, vous obtenez :
 ![result_pc.png](Images/result_pc.png)
 
-### Sur mobile
+#### Sur mobile
 
 1. Il faut passer par le site web (en navigation privée pour éviter la redirection sur l'application, https://todoist.com/auth/login).
 2. Se connecter / s'inscrire
