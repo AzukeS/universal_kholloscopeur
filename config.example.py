@@ -11,7 +11,7 @@ SCHOOL_YEAR_START = None
 EXPORT_PATH = "data/outputs/"
 
 
-# Nom des matières prśentes dans le khôlloscope
+# Nom des matières présentes dans le khôlloscope
 MATIERES_ALIASES = {
     "Mathématiques":  ["math", "maths", "mathematique", "mathematiques"],
     "Physique":       ["phy.", "physique", "pc", "p-c"],
