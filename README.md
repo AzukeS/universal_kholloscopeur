@@ -1,14 +1,35 @@
 # universal_kholloscopeur
 Un projet de conversion intelligente de csv sous un format importable sur todoist à partir d'un calendrier
 
+# Utilisation des fichiers issus du programme 
+
+Si vous possédez un fichier généré par le programme, cf [ce lien](import_todoist.md)
+
+
+# Ce que fait le programme
+
+Il permet de convertir un tableau excel respectant contenant toutes les kholles d'une classe (respectant certaines condition, cf  [section plus bas](#conditions-sur-le-fichier-excel)), comme le suivant :
+
+![basique.png](Images/kholloscope_propre.png)
+En autant de fichiers CSV que de groupes de kholles différents (un par personne si certaines kholles sont individuelles, un par groupe si toutes les kholles sont collectives).
+
+Ce fichier en lui-même est déjà plus lisible que le kholloscope traditionnel :
+
+<img src="Images/CSV_output.png" width="700">
+
+Mais il peut surtout être importé dans Todoist (mobile et PC), afin de voir en un coup d'oeil toutes les informations des khôlles, recevoir des notifications, etc :
+
+<img src="Images/result_mobile.png" width="350">
+
+
 
 # Pour l'exécution 
 
-La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respect les conditions décrites dans la section ci-dessous. <br>
+La première chose à faire est de s'assurer que le fichier excel (ou le pdf qui sera converti en tableau excel) respecte les conditions décrites dans la section ci-dessous. <br>
 
 ## 1) Conditions sur le fichier excel :
 
-Si le kholloscope est de la forme suivante (informations en trop), il faut les supprimer avant export en CSV :
+Si le kholloscope est de la forme suivante (informations en trop, ici des TD/TP), il faut les supprimer avant export en CSV :
 
 <p>
   <img src="Images/Kholloscope%2Bbruit.png" width="500">
@@ -23,14 +44,14 @@ Si le kholloscope est de la forme suivante (informations en trop), il faut les s
 - Les semaines du kholloscope doivent contenir dans la même case une information au moins sur le jour mais aussi sur le mois (e.g. "02/01" ou même "2-sept") mais surtout pas comme dans l'exemple suivant :
 
 ![eleves_semaines_confondus.png](Images/eleves_semaines_confondus.png)
-Ici les semaines ne peuvent être ditinguées des élèves dans un format CSV, on peut alors rajouter le mois manuellement :
+Ici les semaines ne peuvent être distinguées des élèves dans un format CSV, on peut alors rajouter le mois manuellement :
 
 ![version_corrigee.png](Images/version_corrigee.png)
 Et ici le code fonctionnera parfaitement.
 
 ## Exemples de tableurs fonctionnels (se rapprocher de leurs formats peut résoudre des problèmes)
 
-![basique.png](Images/basique.png)
+![basique.png](Images/kholloscope_propre.png)
 ![version_corrigee.png](Images/version_corrigee.png)
 ![kholloscope_sans_bruit.png](Images/kholloscope_sans_bruit.png)
 
