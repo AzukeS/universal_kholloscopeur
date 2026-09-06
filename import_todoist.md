@@ -14,7 +14,7 @@ Il vous a soit été donné directement par quelqu'un, soit est issu du programm
 2. [Sur ordinateur](#sur-ordinateur-plus-simple) 
 
 
-### Sur ordinateur  (plus simple)
+### Sur ordinateur (plus simple)
 
 1. Se rendre soit sur le site web (https://todoist.com/) soit sur l'application. 
 2. Se connecter / s'inscrire
